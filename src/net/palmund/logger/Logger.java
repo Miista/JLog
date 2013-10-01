@@ -115,7 +115,13 @@ public final class Logger {
 			@SuppressWarnings("unchecked")
 			Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
 			out = outKlass.newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NullPointerException e) {
+		} catch (Exception e) {
+			/*
+			 * InstantiationException
+			 * IllegalAccessException
+			 * ClassNotFoundException
+			 * NullPointerException
+			 */
 			/*
 			 * If all fails fall back to whatever default System.* PrintStream is set.
 			 */

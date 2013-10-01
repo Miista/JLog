@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-public class PropertyManager {
+class PropertyManager {
 	private static PropertyManager instance = null;
 
 	/**
@@ -39,7 +39,8 @@ public class PropertyManager {
 			try {
 				properties.load(in);
 				in.close();
-			} catch (IOException | NullPointerException e) {
+			} catch (IOException e) {
+			} catch (NullPointerException e) {
 			}
 		}
 		merge(properties, defaults);
