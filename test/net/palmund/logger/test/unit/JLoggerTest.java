@@ -19,7 +19,7 @@ public class JLoggerTest {
 	@BeforeClass
 	public static void setup() {
 		try {
-			p = (Stream) Logger.getLogger(JLoggerTest.class).messagePrinter.getPrintStream();
+			p = (Stream) Logger.getLogger(JLoggerTest.class).getMessagePrinter().getPrintStream();
 		} catch (ClassCastException e) {
 			fail("Could not inject "+Stream.class+" into Logger!");
 		}

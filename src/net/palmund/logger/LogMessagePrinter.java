@@ -2,11 +2,11 @@ package net.palmund.logger;
 
 import java.io.PrintStream;
 
-public class LogMessagePrinter {
+public final class LogMessagePrinter {
 	private PrintStream printStream;
-	private LogFormatter formatter;
+	private MessageFormatter formatter;
 	
-	public LogMessagePrinter(PrintStream out, LogFormatter formatter) {
+	public LogMessagePrinter(PrintStream out, MessageFormatter formatter) {
 		this.formatter = formatter;
 		this.printStream = out;
 	}
@@ -19,9 +19,4 @@ public class LogMessagePrinter {
 	public PrintStream getPrintStream() {
 		return printStream;
 	}
-	
-//	@Deprecated
-//	public void setFormatter(LogFormatter formatter) {
-//		this.formatter = formatter;
-//	}
 }

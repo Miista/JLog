@@ -67,15 +67,11 @@ public final class Logger {
 	
 	public static <T> void JLog(Class<T> klass, Object object) {
 		JLog(klass, object.toString());
-//		Logger logger = getLogger(klass);
-//		logger.log(object);
 	}
 	
 	public static <T> void JLog(Class<T> klass, String format, Object ... args) {
 		String formattedMessage = String.format(format, args);
 		JLog(klass, formattedMessage);
-//		Logger logger = getLogger(klass);
-//		logger.log(format, args);
 	}
 	
 	public static <T> void JLog(Class<T> klass, String message) {
@@ -88,13 +84,7 @@ public final class Logger {
 		return messageHistory;
 	}
 	
-//	public static <T, E extends PrintStream> PrintStream getPrintStream(Class<T> klass) {
-//		Logger logger = getLogger(klass);
-//		return logger.messagePrinter.getPrintStream();
-//	}
-	
-//	private final LogMessageFactory messageFactory;
-	public final LogMessagePrinter messagePrinter;
+	private final LogMessagePrinter messagePrinter;
 	private final LogFilter filter;
 	private final Class<?> klass;
 	private final boolean printLogMessages;
@@ -102,10 +92,8 @@ public final class Logger {
 	private Logger(Class<?> klass, Properties properties) {
 		this.printLogMessages = Boolean.parseBoolean(properties.getProperty(PropertyKey.VERBOSE.getPropertyKeyPath()));
 		this.klass = klass;
-//		this.messageFactory = new LogMessageFactory();
-		
 		this.filter = createLogFilter(properties);
-		LogFormatter formatter = new LogFormatter(	properties.getProperty(PropertyKey.TIME_FORMAT.getPropertyKeyPath()),
+		MessageFormatter formatter = new LogFormatter(	properties.getProperty(PropertyKey.TIME_FORMAT.getPropertyKeyPath()),
 													properties.getProperty(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath())
 													);
 		
@@ -172,28 +160,11 @@ public final class Logger {
 		}
 	}
 
-	/*
-	public void log(String format, Object... args) {
-		String formattedMessage = String.format(format, args);
-		LogMessage message = messageFactory.createLoggedMessage(klass, message)
-		log(formattedMessage);
-	}
-	*/
-
-	public void log(String formattedMessage) {
-//		log(message, (Object[])null);
+	void log(String formattedMessage) {
 		LogMessage message = new LogMessage(klass, formattedMessage); //.createLoggedMessage(klass, formattedMessage);
 		addMessageToHistory(message);
 		printLoggedMessage(message);
 	}
-
-	/*
-	public void log(Object object) {
-		LogMessage message = messageFactory.createLoggedMessage(klass, object);
-		addMessageToHistory(message);
-		printLoggedMessage(message);
-	}
-	*/
 
 	private void addMessageToHistory(LogMessage message) {
 		messageHistory.add(message);
@@ -203,5 +174,9 @@ public final class Logger {
 		if (printLogMessages && filter.shouldAllowLoggingForClass(message.getLoggingClass())) {
 			messagePrinter.printMessage(message);
 		}
+	}
+	
+	public LogMessagePrinter getMessagePrinter() {
+		return messagePrinter;
 	}
 }

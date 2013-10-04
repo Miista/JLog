@@ -1,5 +1,5 @@
 package net.palmund.logger;
 
-public interface LogFilter {
+interface LogFilter {
 	<T> boolean shouldAllowLoggingForClass(Class<T> klass);
 }

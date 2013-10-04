@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LogFormatter { //implements LogFormatter_ {
+class LogFormatter implements MessageFormatter { //implements LogFormatter_ {
 	private final SimpleDateFormat dateFormat;
 	
 	private Calendar cal = Calendar.getInstance();
@@ -15,7 +15,7 @@ public class LogFormatter { //implements LogFormatter_ {
 		this.messageFormat = messageFormat;
 	}
 	
-//	@Override
+	@Override
 	public String format(LogMessage message) {
 		return replaceFields(messageFormat, message);
 	}
