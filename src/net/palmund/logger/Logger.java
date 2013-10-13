@@ -52,7 +52,7 @@ public final class Logger {
 				put(PropertyKey.VERBOSE.getPropertyKeyPath(), "true");
 				put(PropertyKey.TIME_FORMAT.getPropertyKeyPath(), "d/M/yyyy kk:mm:ss.SSS");
 				put(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath(), "[$date] $message");
-				put(PropertyKey.PRINT_USE_SYSTEM.getPropertyKeyPath(), "out");
+				put(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath(), "java.lang.System.out");
 			}};			
 			PropertyManager manager = PropertyManager.getInstance(PROPERTY_FILE, defaults);
 			properties = manager.getProperties();
@@ -94,16 +94,28 @@ public final class Logger {
 		this.klass = klass;
 		this.filter = createLogFilter(properties);
 		MessageFormatter formatter = new LogFormatter(	properties.getProperty(PropertyKey.TIME_FORMAT.getPropertyKeyPath()),
-													properties.getProperty(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath())
+														properties.getProperty(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath())
 													);
 		
 		PrintStream out = null;
 		try {
 			String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
-			@SuppressWarnings("unchecked")
-			Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
-			out = outKlass.newInstance();
+			if (printStreamClassName == null) {
+				out = System.out;
+			} else {
+				if (printStreamClassName.startsWith("java.lang.System")) {
+					String systemPrintStream = printStreamClassName.replace("java.lang.System", "");
+					out = getSystemPrintStream(systemPrintStream);
+					System.out.println("here2");
+				} else {
+					@SuppressWarnings("unchecked")
+					Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
+					out = outKlass.newInstance();
+					System.out.println("here1");
+				}
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			/*
 			 * InstantiationException
 			 * IllegalAccessException
@@ -113,8 +125,7 @@ public final class Logger {
 			/*
 			 * If all fails fall back to whatever default System.* PrintStream is set.
 			 */
-			String systemPrintStream = properties.getProperty(PropertyKey.PRINT_USE_SYSTEM.getPropertyKeyPath());
-			out = getSystemPrintStream(systemPrintStream);
+			out = System.out;
 		} finally {
 			this.messagePrinter = new LogMessagePrinter(out, formatter);
 		}
