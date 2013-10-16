@@ -15,6 +15,7 @@ import java.util.Vector;
  * <ul>
  * 	<li>jlogger.print.class: a class that extends {@link PrintStream} to use instead of System.*</li>
  * 	<li>jlogger.print.verbose: whether messages should be printed</li>
+ * 	<li>jlogger.formatter.class: a class that extends {@link MessageFormatter} to use for formatting log messages</li>
  * 	<li>jlogger.formatter.time: the format to apply to the date and time. See {@link SimpleDateFormat}</li>
  * 	<li>jlogger.formatter.message: the format to apply to the text when printing the logged message.
  * 		When setting the format for printing log messages, the following variables are available:
@@ -87,12 +88,9 @@ public final class Logger {
 		this.printLogMessages = Boolean.parseBoolean(properties.getProperty(PropertyKey.VERBOSE.getPropertyKeyPath()));
 		this.klass = klass;
 		this.filter = createLogFilter(properties);
-		
-		String formatterClassName = properties.getProperty(PropertyKey.LOG_FORMATTER.getPropertyKeyPath());
-		MessageFormatter formatter = createMessageFormatter(formatterClassName);
-		
-		String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
-		PrintStream out = getPrintStream(printStreamClassName);
+
+		MessageFormatter formatter = createMessageFormatter(properties);
+		PrintStream out = getPrintStream(properties);
 		
 		this.messagePrinter = new LogMessagePrinter(out, formatter);
 	}
@@ -130,7 +128,8 @@ public final class Logger {
 	}
 
 	@SuppressWarnings("unchecked")
-	private MessageFormatter createMessageFormatter(String formatterClassName) {
+	private MessageFormatter createMessageFormatter(Properties properties) {
+		String formatterClassName = properties.getProperty(PropertyKey.LOG_FORMATTER.getPropertyKeyPath());
 		MessageFormatter formatter;
 		try {
 			Class<MessageFormatter> formatterClass = (Class<MessageFormatter>) Logger.class.getClassLoader().loadClass(formatterClassName);
@@ -141,7 +140,8 @@ public final class Logger {
 		return formatter;
 	}
 	
-	private PrintStream getPrintStream(String printStreamClassName) {
+	private PrintStream getPrintStream(Properties properties) {
+		String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
 		PrintStream printStream;
 		try {
 			if (printStreamClassName == null) {
@@ -181,7 +181,7 @@ public final class Logger {
 	}
 
 	private void log(String formattedMessage) {
-		LogMessage message = new LogMessage(klass, formattedMessage); //.createLoggedMessage(klass, formattedMessage);
+		LogMessage message = new LogMessage(klass, formattedMessage);
 		addMessageToHistory(message);
 		printLoggedMessage(message);
 	}

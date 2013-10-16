@@ -10,11 +10,6 @@ class LogFormatter implements MessageFormatter {
 	
 	private Calendar cal = Calendar.getInstance();
 	
-//	public LogFormatter(String dateFormat, String messageFormat) {
-//		this.dateFormat = new SimpleDateFormat(dateFormat);
-//		this.messageFormat = messageFormat;
-//	}
-	
 	@Override
 	public String format(LogMessage message) {
 		return replaceFields(messageFormat, message);

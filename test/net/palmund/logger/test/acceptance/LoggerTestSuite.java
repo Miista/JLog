@@ -8,7 +8,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ LoggerTest_2.class, LoggerTest_3.class, LoggerTest_4.class })
+@SuiteClasses({
+	LoggerTest_2.class,
+	LoggerTest_3.class,
+	LoggerTest_4.class
+})
 public class LoggerTestSuite {
 	@Test
 	public void test() {
