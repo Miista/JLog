@@ -4,16 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-class LogFormatter implements MessageFormatter { //implements LogFormatter_ {
-	private final SimpleDateFormat dateFormat;
+class LogFormatter implements MessageFormatter {
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy kk:mm:ss.SSS");
+	private final String messageFormat = "[$date] <$class_name> $message";
 	
 	private Calendar cal = Calendar.getInstance();
-	private String messageFormat;
 	
-	public LogFormatter(String dateFormat, String messageFormat) {
-		this.dateFormat = new SimpleDateFormat(dateFormat);
-		this.messageFormat = messageFormat;
-	}
+//	public LogFormatter(String dateFormat, String messageFormat) {
+//		this.dateFormat = new SimpleDateFormat(dateFormat);
+//		this.messageFormat = messageFormat;
+//	}
 	
 	@Override
 	public String format(LogMessage message) {

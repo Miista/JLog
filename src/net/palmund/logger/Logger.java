@@ -52,6 +52,7 @@ public final class Logger {
 				put(PropertyKey.TIME_FORMAT.getPropertyKeyPath(), "d/M/yyyy kk:mm:ss.SSS");
 				put(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath(), "[$date] $message");
 				put(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath(), "java.lang.System.out");
+				put(PropertyKey.LOG_FORMATTER.getPropertyKeyPath(), "net.palmund.logger.LogFormatter");
 			}};			
 			PropertyManager manager = PropertyManager.getInstance(PROPERTY_FILE, defaults);
 			properties = manager.getProperties();
@@ -86,42 +87,14 @@ public final class Logger {
 		this.printLogMessages = Boolean.parseBoolean(properties.getProperty(PropertyKey.VERBOSE.getPropertyKeyPath()));
 		this.klass = klass;
 		this.filter = createLogFilter(properties);
-		MessageFormatter formatter = new LogFormatter(	properties.getProperty(PropertyKey.TIME_FORMAT.getPropertyKeyPath()),
-														properties.getProperty(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath())
-														);
 		
-		PrintStream out = null;
-		try {
-			String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
-			if (printStreamClassName == null) {
-				out = System.out;
-			} else {
-				if (printStreamClassName.startsWith("java.lang.System")) {
-					String systemPrintStream = printStreamClassName.replace("java.lang.System", "");
-					out = getSystemPrintStream(systemPrintStream);
-					System.out.println("here2");
-				} else {
-					@SuppressWarnings("unchecked")
-					Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
-					out = outKlass.newInstance();
-					System.out.println("here1");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			/*
-			 * InstantiationException
-			 * IllegalAccessException
-			 * ClassNotFoundException
-			 * NullPointerException
-			 */
-			/*
-			 * If all fails fall back to System.out
-			 */
-			out = System.out;
-		} finally {
-			this.messagePrinter = new LogMessagePrinter(out, formatter);
-		}
+		String formatterClassName = properties.getProperty(PropertyKey.LOG_FORMATTER.getPropertyKeyPath());
+		MessageFormatter formatter = createMessageFormatter(formatterClassName);
+		
+		String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
+		PrintStream out = getPrintStream(printStreamClassName);
+		
+		this.messagePrinter = new LogMessagePrinter(out, formatter);
 	}
 	
 	private LogFilter createLogFilter(Properties properties) {
@@ -156,6 +129,49 @@ public final class Logger {
 		return filter;
 	}
 
+	@SuppressWarnings("unchecked")
+	private MessageFormatter createMessageFormatter(String formatterClassName) {
+		MessageFormatter formatter;
+		try {
+			Class<MessageFormatter> formatterClass = (Class<MessageFormatter>) Logger.class.getClassLoader().loadClass(formatterClassName);
+			formatter = formatterClass.newInstance();
+		} catch (Exception e) {
+			formatter = new LogFormatter();
+		}
+		return formatter;
+	}
+	
+	private PrintStream getPrintStream(String printStreamClassName) {
+		PrintStream printStream;
+		try {
+			if (printStreamClassName == null) {
+				printStream = System.out;
+			} else {
+				if (printStreamClassName.startsWith("java.lang.System")) {
+					String systemPrintStream = printStreamClassName.replace("java.lang.System", "");
+					printStream = getSystemPrintStream(systemPrintStream);
+				} else {
+					@SuppressWarnings("unchecked")
+					Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
+					printStream = outKlass.newInstance();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			/*
+			 * InstantiationException
+			 * IllegalAccessException
+			 * ClassNotFoundException
+			 * NullPointerException
+			 */
+			/*
+			 * If all fails fall back to System.out
+			 */
+			printStream = System.out;
+		}
+		return printStream;
+	}
+	
 	private PrintStream getSystemPrintStream(String streamIdentifier) {
 		if (streamIdentifier.equals("err")) {
 			return System.err;

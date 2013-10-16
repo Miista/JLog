@@ -6,6 +6,7 @@ enum PropertyKey {
 	PRINT_STREAM_CLASS("jlogger.print.class"),
 	VERBOSE("jlogger.print.verbose"),
 	IGNORE_CLASSES("jlogger.filter.ignoreClasses"),
+	LOG_FORMATTER("jlogger.formatter.class"),
 	;
 	
 	private String propertyKey;
