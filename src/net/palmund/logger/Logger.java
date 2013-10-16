@@ -14,7 +14,7 @@ import java.util.Vector;
  * 
  * <ul>
  * 	<li>jlogger.print.class: a class that extends {@link PrintStream} to use instead of System.*</li>
- * 	<li>jlogger.print.doPrint: whether messages should be printed</li>
+ * 	<li>jlogger.print.verbose: whether messages should be printed</li>
  * 	<li>jlogger.formatter.time: the format to apply to the date and time. See {@link SimpleDateFormat}</li>
  * 	<li>jlogger.formatter.message: the format to apply to the text when printing the logged message.
  * 		When setting the format for printing log messages, the following variables are available:

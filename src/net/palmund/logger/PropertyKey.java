@@ -4,7 +4,7 @@ enum PropertyKey {
 	TIME_FORMAT("jlogger.formatter.time"),
 	MESSAGE_FORMAT("jlogger.formatter.message"),
 	PRINT_STREAM_CLASS("jlogger.print.class"),
-	VERBOSE("jlogger.print.doPrint"),
+	VERBOSE("jlogger.print.verbose"),
 	IGNORE_CLASSES("jlogger.filter.ignoreClasses"),
 	;
 	
