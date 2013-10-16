@@ -14,8 +14,7 @@ import java.util.Vector;
  * 
  * <ul>
  * 	<li>jlogger.print.class: a class that extends {@link PrintStream} to use instead of System.*</li>
- * 	<li>jlogger.print.doPrint: whether logged messages should be printed</li>
- * 	<li>jlogger.print.useSystem = [<i>out</i> | <i>err</i> ]</li>
+ * 	<li>jlogger.print.doPrint: whether messages should be printed</li>
  * 	<li>jlogger.formatter.time: the format to apply to the date and time. See {@link SimpleDateFormat}</li>
  * 	<li>jlogger.formatter.message: the format to apply to the text when printing the logged message.
  * 		When setting the format for printing log messages, the following variables are available:
@@ -171,7 +170,7 @@ public final class Logger {
 		}
 	}
 
-	void log(String formattedMessage) {
+	private void log(String formattedMessage) {
 		LogMessage message = new LogMessage(klass, formattedMessage); //.createLoggedMessage(klass, formattedMessage);
 		addMessageToHistory(message);
 		printLoggedMessage(message);
