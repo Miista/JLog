@@ -55,11 +55,6 @@ public final class Logger {
 			}};			
 			PropertyManager manager = PropertyManager.getInstance(PROPERTY_FILE, defaults);
 			properties = manager.getProperties();
-			String redirectPropertyFile = properties.getProperty(PropertyKey.REDIRECT.getPropertyKeyPath());
-			if (redirectPropertyFile != null) {
-				manager = PropertyManager.getInstance(redirectPropertyFile, defaults);
-				properties = manager.getProperties();
-			}
 		}
 		return properties;
 	}
@@ -78,7 +73,6 @@ public final class Logger {
 		logger.log(message);
 	}
 	
-	
 	public static Collection<LogMessage> getAllLoggedMessages() {
 		return messageHistory;
 	}
@@ -94,7 +88,7 @@ public final class Logger {
 		this.filter = createLogFilter(properties);
 		MessageFormatter formatter = new LogFormatter(	properties.getProperty(PropertyKey.TIME_FORMAT.getPropertyKeyPath()),
 														properties.getProperty(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath())
-													);
+														);
 		
 		PrintStream out = null;
 		try {
@@ -122,7 +116,7 @@ public final class Logger {
 			 * NullPointerException
 			 */
 			/*
-			 * If all fails fall back to whatever default System.* PrintStream is set.
+			 * If all fails fall back to System.out
 			 */
 			out = System.out;
 		} finally {
