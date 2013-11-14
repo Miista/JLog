@@ -1,3 +1,10 @@
+/*
+ * Copyright 2013 (C) S¿ren Palmund
+ * 
+ * Licensed under the License described in LICENSE (the "License"); you may not
+ * use this file except in compliance with the License.
+ */
+
 package net.palmund.logger;
 
 import java.io.PrintStream;
