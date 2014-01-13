@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-class LogFormatter implements MessageFormatter {
+final class LogFormatter implements MessageFormatter {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy kk:mm:ss.SSS");
 	private final String messageFormat = "[$date] <$class_name> $message";
 	
