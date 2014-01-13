@@ -40,10 +40,11 @@ import java.util.Vector;
 public final class Logger {
 	private static final Map<Class<?>, Logger> loggerMap = new HashMap<Class<?>, Logger>();
 	private static final List<LogMessage> messageHistory = new Vector<LogMessage>();
+	private static final LoggerFactory factory = LoggerFactory.getInstance();
 	
 	public static <T> Logger getLogger(Class<T> klass) {
 		if (!loggerMap.containsKey(klass)) {
-			Logger logger = new Logger(klass, LoggerProperties.getInstance());
+			Logger logger = factory.createLogger(klass);
 			loggerMap.put(klass, logger);
 		}
 		return loggerMap.get(klass);
@@ -72,7 +73,7 @@ public final class Logger {
 	private final Class<?> klass;
 	private final boolean printLogMessages;
 	
-	private Logger(Class<?> klass, Properties properties) {
+	Logger(Class<?> klass, Properties properties) {
 		this.printLogMessages = Boolean.parseBoolean(properties.getProperty(PropertyKey.VERBOSE.getPropertyKeyPath()));
 		this.klass = klass;
 		this.filter = createLogFilter(properties);
