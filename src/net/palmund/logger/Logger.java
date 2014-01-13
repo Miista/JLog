@@ -38,34 +38,15 @@ import java.util.Vector;
  * @author S¿ren Palmund
  */
 public final class Logger {
-	private static final String PROPERTY_FILE = "/jlogger.properties";
 	private static final Map<Class<?>, Logger> loggerMap = new HashMap<Class<?>, Logger>();
 	private static final List<LogMessage> messageHistory = new Vector<LogMessage>();
 	
-	private static Properties properties;
-	
 	public static <T> Logger getLogger(Class<T> klass) {
 		if (!loggerMap.containsKey(klass)) {
-			Logger logger = new Logger(klass, getProperties());
+			Logger logger = new Logger(klass, LoggerProperties.getInstance());
 			loggerMap.put(klass, logger);
 		}
 		return loggerMap.get(klass);
-	}
-	
-	private static Properties getProperties() {
-		if (properties == null) {
-			@SuppressWarnings("serial")
-			Map<String, String> defaults = new HashMap<String, String>() {{
-				put(PropertyKey.VERBOSE.getPropertyKeyPath(), "true");
-				put(PropertyKey.TIME_FORMAT.getPropertyKeyPath(), "d/M/yyyy kk:mm:ss.SSS");
-				put(PropertyKey.MESSAGE_FORMAT.getPropertyKeyPath(), "[$date] $message");
-				put(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath(), "java.lang.System.out");
-				put(PropertyKey.LOG_FORMATTER.getPropertyKeyPath(), "net.palmund.logger.LogFormatter");
-			}};			
-			PropertyManager manager = PropertyManager.getInstance(PROPERTY_FILE, defaults);
-			properties = manager.getProperties();
-		}
-		return properties;
 	}
 	
 	public static <T> void JLog(Class<T> klass, Object object) {
