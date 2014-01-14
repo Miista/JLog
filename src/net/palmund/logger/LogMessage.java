@@ -8,9 +8,9 @@
 package net.palmund.logger;
 
 public final class LogMessage {
-	private Class<?> loggingClass;
-	private String message;
-	private long timestamp;
+	private final Class<?> loggingClass;
+	private final String message;
+	private final long timestamp;
 
 	protected LogMessage(Class<?> loggingClass, String message) {
 		this(loggingClass, message, System.currentTimeMillis());
@@ -30,7 +30,7 @@ public final class LogMessage {
 		return timestamp;
 	}
 	
-	public Class<?> getLoggingClass() {
+	Class<?> getLoggingClass() {
 		return loggingClass;
 	}
 }

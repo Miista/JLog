@@ -1,4 +1,4 @@
-package net.palmund.logger.test.unit;
+package net.palmund.logger.test;
 
 
 import java.io.PrintStream;

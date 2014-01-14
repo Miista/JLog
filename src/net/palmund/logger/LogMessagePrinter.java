@@ -9,9 +9,9 @@ package net.palmund.logger;
 
 import java.io.PrintStream;
 
-public final class LogMessagePrinter {
-	private PrintStream printStream;
-	private MessageFormatter formatter;
+final class LogMessagePrinter {
+	private final PrintStream printStream;
+	private final MessageFormatter formatter;
 	
 	public LogMessagePrinter(PrintStream out, MessageFormatter formatter) {
 		this.formatter = formatter;

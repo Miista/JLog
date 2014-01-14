@@ -15,7 +15,7 @@ final class LogFormatter implements MessageFormatter {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy kk:mm:ss.SSS");
 	private final String messageFormat = "[$date] <$class_name> $message";
 	
-	private Calendar cal = Calendar.getInstance();
+	private final Calendar cal = Calendar.getInstance();
 	
 	@Override
 	public String format(LogMessage message) {

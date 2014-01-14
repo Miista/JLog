@@ -9,7 +9,6 @@ package net.palmund.logger;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +41,7 @@ public final class Logger {
 	private static final List<LogMessage> messageHistory = new Vector<LogMessage>();
 	private static final LoggerFactory factory = LoggerFactory.getInstance();
 	
-	public static <T> Logger getLogger(Class<T> klass) {
+	private static <T> Logger getLogger(Class<T> klass) {
 		if (!loggerMap.containsKey(klass)) {
 			Logger logger = factory.createLogger(klass);
 			loggerMap.put(klass, logger);
@@ -64,7 +63,7 @@ public final class Logger {
 		logger.log(message);
 	}
 	
-	public static Collection<LogMessage> getAllLoggedMessages() {
+	public static Collection<LogMessage> getMessageHistory() {
 		return messageHistory;
 	}
 	
@@ -73,101 +72,101 @@ public final class Logger {
 	private final Class<?> klass;
 	private final boolean printLogMessages;
 	
-	Logger(Class<?> klass, Properties properties) {
+	Logger(Class<?> klass, Properties properties, LogFilter filter, LogMessagePrinter messagePrinter) {
 		this.printLogMessages = Boolean.parseBoolean(properties.getProperty(PropertyKey.VERBOSE.getPropertyKeyPath()));
 		this.klass = klass;
-		this.filter = createLogFilter(properties);
-
-		MessageFormatter formatter = createMessageFormatter(properties);
-		PrintStream out = getPrintStream(properties);
-		
-		this.messagePrinter = new LogMessagePrinter(out, formatter);
+		this.filter = filter; //createLogFilter(properties);
+		this.messagePrinter = messagePrinter;
+//		MessageFormatter formatter = createMessageFormatter(properties);
+//		PrintStream out = getPrintStream(properties);
+//		
+//		this.messagePrinter = new LogMessagePrinter(out, formatter);
 	}
 	
-	private LogFilter createLogFilter(Properties properties) {
-		LogFilter filter;
-		String ignoreClasses = properties.getProperty(PropertyKey.IGNORE_CLASSES.getPropertyKeyPath());
-		if (ignoreClasses == null) {
-			filter = new LogFilter() {
-				@Override
-				public <T> boolean shouldAllowLoggingForClass(Class<T> klass) {
-					return true;
-				}
-			};
-		} else {
-			String[] chunks = ignoreClasses.split(",");
-			final ArrayList<Class<?>> ignoreClassesList = new ArrayList<Class<?>>();
-			for (String string : chunks) {
-				try {
-					String trimmedClassName = string.trim();
-					Class<?> klass = Class.forName(trimmedClassName);
-					ignoreClassesList.add(klass);
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-			}
-			filter = new LogFilter() {
-				@Override
-				public <T> boolean shouldAllowLoggingForClass(Class<T> klass) {
-					return !(ignoreClassesList.contains(klass));
-				}
-			};
-		}
-		return filter;
-	}
-
-	@SuppressWarnings("unchecked")
-	private MessageFormatter createMessageFormatter(Properties properties) {
-		String formatterClassName = properties.getProperty(PropertyKey.LOG_FORMATTER.getPropertyKeyPath());
-		MessageFormatter formatter;
-		try {
-			Class<MessageFormatter> formatterClass = (Class<MessageFormatter>) Logger.class.getClassLoader().loadClass(formatterClassName);
-			formatter = formatterClass.newInstance();
-		} catch (Exception e) {
-			formatter = new LogFormatter();
-		}
-		return formatter;
-	}
-	
-	private PrintStream getPrintStream(Properties properties) {
-		String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
-		PrintStream printStream;
-		try {
-			if (printStreamClassName == null) {
-				printStream = System.out;
-			} else {
-				if (printStreamClassName.startsWith("java.lang.System")) {
-					String systemPrintStream = printStreamClassName.replace("java.lang.System", "");
-					printStream = getSystemPrintStream(systemPrintStream);
-				} else {
-					@SuppressWarnings("unchecked")
-					Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
-					printStream = outKlass.newInstance();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			/*
-			 * InstantiationException
-			 * IllegalAccessException
-			 * ClassNotFoundException
-			 * NullPointerException
-			 */
-			/*
-			 * If all fails fall back to System.out
-			 */
-			printStream = System.out;
-		}
-		return printStream;
-	}
-	
-	private PrintStream getSystemPrintStream(String streamIdentifier) {
-		if (streamIdentifier.equals("err")) {
-			return System.err;
-		} else {
-			return System.out;
-		}
-	}
+//	private LogFilter createLogFilter(Properties properties) {
+//		LogFilter filter;
+//		String ignoreClasses = properties.getProperty(PropertyKey.IGNORE_CLASSES.getPropertyKeyPath());
+//		if (ignoreClasses == null) {
+//			filter = new LogFilter() {
+//				@Override
+//				public <T> boolean shouldAllowLoggingForClass(Class<T> klass) {
+//					return true;
+//				}
+//			};
+//		} else {
+//			String[] chunks = ignoreClasses.split(",");
+//			final ArrayList<Class<?>> ignoreClassesList = new ArrayList<Class<?>>();
+//			for (String string : chunks) {
+//				try {
+//					String trimmedClassName = string.trim();
+//					Class<?> klass = Class.forName(trimmedClassName);
+//					ignoreClassesList.add(klass);
+//				} catch (ClassNotFoundException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			filter = new LogFilter() {
+//				@Override
+//				public <T> boolean shouldAllowLoggingForClass(Class<T> klass) {
+//					return !(ignoreClassesList.contains(klass));
+//				}
+//			};
+//		}
+//		return filter;
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//	private MessageFormatter createMessageFormatter(Properties properties) {
+//		String formatterClassName = properties.getProperty(PropertyKey.LOG_FORMATTER.getPropertyKeyPath());
+//		MessageFormatter formatter;
+//		try {
+//			Class<MessageFormatter> formatterClass = (Class<MessageFormatter>) Logger.class.getClassLoader().loadClass(formatterClassName);
+//			formatter = formatterClass.newInstance();
+//		} catch (Exception e) {
+//			formatter = new LogFormatter();
+//		}
+//		return formatter;
+//	}
+//	
+//	private PrintStream getPrintStream(Properties properties) {
+//		String printStreamClassName = properties.getProperty(PropertyKey.PRINT_STREAM_CLASS.getPropertyKeyPath());
+//		PrintStream printStream;
+//		try {
+//			if (printStreamClassName == null) {
+//				printStream = System.out;
+//			} else {
+//				if (printStreamClassName.startsWith("java.lang.System")) {
+//					String systemPrintStream = printStreamClassName.replace("java.lang.System", "");
+//					printStream = getSystemPrintStream(systemPrintStream);
+//				} else {
+//					@SuppressWarnings("unchecked")
+//					Class<? extends PrintStream> outKlass = (Class<? extends PrintStream>) Class.forName(printStreamClassName);
+//					printStream = outKlass.newInstance();
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			/*
+//			 * InstantiationException
+//			 * IllegalAccessException
+//			 * ClassNotFoundException
+//			 * NullPointerException
+//			 */
+//			/*
+//			 * If all fails fall back to System.out
+//			 */
+//			printStream = System.out;
+//		}
+//		return printStream;
+//	}
+//	
+//	private PrintStream getSystemPrintStream(String streamIdentifier) {
+//		if (streamIdentifier.equals("err")) {
+//			return System.err;
+//		} else {
+//			return System.out;
+//		}
+//	}
 
 	private void log(String formattedMessage) {
 		LogMessage message = new LogMessage(klass, formattedMessage);
@@ -185,7 +184,7 @@ public final class Logger {
 		}
 	}
 	
-	public LogMessagePrinter getMessagePrinter() {
+	LogMessagePrinter getMessagePrinter() {
 		return messagePrinter;
 	}
 }
